@@ -1,0 +1,16 @@
+{
+	"name": "Curl"
+	"homepage": "https://curl.haxx.se/",
+	"default-version": "git",
+	
+	"versions": {
+		"git": {
+			"scm-git": "git://github.com/bagder/curl.git"
+			"platforms" {
+				"msvc2010-x86": {
+					
+				}
+			}
+		},
+	},
+}
