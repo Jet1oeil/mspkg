@@ -21,7 +21,8 @@ cd $DST_PATH
 
 # Extract archive
 
-Remove-Item "live" -recurse
+# Remove-Item "live" -recurse
+# Remove-Item "release" -recurse
 
 if(!(Test-Path -Path "live" )){
 	cmd /c "7z x ""$DST_PATH\$FILENAME"" -so | 7z x -aoa -si -ttar -o""."""
@@ -40,19 +41,20 @@ if(!(Test-Path -Path "live" )){
 }
 
 # Build project
-cd live
-cmd /c "genWindowsMakefiles.cmd"
-cd liveMedia
-nmake /B -f liveMedia.mak install
-cd ..\groupsock
-nmake /B -f groupsock.mak install
-cd ..\UsageEnvironment
-nmake /B -f UsageEnvironment.mak install
-cd ..\BasicUsageEnvironment
-nmake /B -f BasicUsageEnvironment.mak install
-cd ..\testProgs
-nmake /B -f testProgs.mak install
-cd ..\mediaServer
-nmake /B -f mediaServer.mak install
-
+if(!(Test-Path -Path "release" )){
+	cd live
+	cmd /c "genWindowsMakefiles.cmd"
+	cd liveMedia
+	nmake /B -f liveMedia.mak install
+	cd ..\groupsock
+	nmake /B -f groupsock.mak install
+	cd ..\UsageEnvironment
+	nmake /B -f UsageEnvironment.mak install
+	cd ..\BasicUsageEnvironment
+	nmake /B -f BasicUsageEnvironment.mak install
+	cd ..\testProgs
+	nmake /B -f testProgs.mak install
+	cd ..\mediaServer
+	nmake /B -f mediaServer.mak install
+}
 popd
