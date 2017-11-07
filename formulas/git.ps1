@@ -33,4 +33,5 @@ if(!(Test-Path -Path "${DST_PATH}\PortableGit" )){
 	Write-Host "  -- Already installed"
 }
 
-"${DST_PATH}\PortableGit;" >> "path.env"
+"${DST_PATH}\PortableGit\bin;" >> "path.env"
+"${DST_PATH}\PortableGit\usr\bin;" >> "path.env"

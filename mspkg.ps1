@@ -98,6 +98,7 @@ $PLATEFORM_ARCH="$platform-$arch"
 switch ($PLATEFORM_ARCH)
 {
 	"msvc2010-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
+	"msvc2017-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
 }
 
 # Execute command
