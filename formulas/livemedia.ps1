@@ -10,7 +10,7 @@ $DST_PATH="$installpath\$version-$platform-$arch"
 Create-Directory $DST_PATH
 
 $FILENAME="live555-latest.tar.gz"
-$REMOTEURL="http://www.live555.com/liveMedia/public/live555-latest.tar.gz"
+$REMOTEURL="http://www.live555.com/liveMedia/public/$FILENAME"
 
 # Downloading the sources
 Download-File $REMOTEURL "$DST_PATH\$FILENAME"

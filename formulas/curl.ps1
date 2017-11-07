@@ -6,18 +6,20 @@ param(
 	  [string] $arch
 )
 
-$DST_PATH="$installpath/$version-$platform-$arch"
+$DST_PATH="$installpath\$version-$platform-$arch"
 
 Write-Host "++ Building curl (version=$version, platform=$platform, arch=$arch"
 Git-Update git://github.com/bagder/curl.git $DST_PATH
 pushd
 cd $DST_PATH
-cmd /c "buildconf.bat"
-cd winbuild
-switch($platform)
-{
-	"msvc2010" {$VCVER="10"}
-	"msvc2017" {$VCVER="16"}
+if(!(Test-Path -Path "builds" )){
+	cmd /c "buildconf.bat"
+	cd winbuild
+	switch($platform)
+	{
+		"msvc2010" {$VCVER="10"}
+		"msvc2017" {$VCVER="16"}
+	}
+	nmake /f Makefile.vc mode=dll VC=$VCVER
 }
-nmake /f Makefile.vc mode=dll VC=$VCVER
 popd
