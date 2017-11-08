@@ -9,7 +9,7 @@ param(
 )
 
 $ENV_PATH = Join-Path(pwd) '\env'
-$INSTALL_PATH =  Join-Path(pwd) '\install'
+$VE_ROOTPATH =  Join-Path(pwd) '\ve'
 $FORMULAS_PATH =  Join-Path(pwd) '\formulas'
 
 
@@ -40,13 +40,14 @@ function Download-File
 function Git-Update
 {
 	param( [string]$gitrepos, [string]$dstpath)
-	Write-Host "  -- Git update $gitrepos => $dstpath"
 	if((Test-Path -Path $dstpath )){
+		Write-Host "  -- Git update $gitrepos => $dstpath"
 		pushd
 		cd $dstpath
 		git pull
 		popd
 	}else{
+		Write-Host "  -- Git clone $gitrepos => $dstpath"
 		git clone $gitrepos $dstpath
 	}
 }
@@ -65,7 +66,7 @@ function Patch-Line
 
 function Install-Package
 {
-	param([string]$pkg, [string]$version, [string]$platform, [string]$arch, [string]$installpath)
+	param([string]$pkg, [string]$version, [string]$platform, [string]$arch, [string]$vepath)
 	
 	Write-Host "++ Installing $pkg $platform"
 	
@@ -80,12 +81,14 @@ function Install-Package
 	#	$version="default"
 	#}
 	
-	$DST_PATH="$installpath\$pkg"
+	$PKG_INSTALL_PATH="$vepath\$pkg\$version"
+	Create-Directory "$PKG_INSTALL_PATH"
 	
 	$INSTALL_SCRIPT="$FORMULAS_PATH\$pkg.ps1"
 	Write-Host "  -- Launching $INSTALL_SCRIPT"
 	
-	Invoke-Expression -Command "$INSTALL_SCRIPT -version git -platform $platform -arch $arch $DST_PATH"
+	Write-Host "++ Building $pkg (version=$version, platform=$platform, arch=$arch)"
+	Invoke-Expression -Command "$INSTALL_SCRIPT -version $version -platform $platform -arch $arch $PKG_INSTALL_PATH"
 	
 }
 
@@ -99,11 +102,13 @@ switch ($PLATEFORM_ARCH)
 {
 	"msvc2010-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
 	"msvc2017-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
+	"msvc2017-x64" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
 }
 
-# Execute command
+# Execute "install" command
 if ($command -eq "install") {
-	Create-Directory "$INSTALL_PATH"
+	$VE_PATH="$VE_ROOTPATH\$platform-$arch"
+	Create-Directory "$VE_PATH"
 
-	Install-Package "$pkg" -version "$version" -platform "$platform" -arch "$arch" "$INSTALL_PATH"
+	Install-Package "$pkg" -version "$version" -platform "$platform" -arch "$arch" "$VE_PATH"
 }

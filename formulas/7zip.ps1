@@ -1,13 +1,10 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
-      [string] $installpath,
+      [string] $pkginstallpath,
 	  [string] $version,
       [string] $platform,
 	  [string] $arch
 )
-
-$DST_PATH="$installpath\$version-$platform-$arch"
-Create-Directory $DST_PATH
 
 $REMOTEDIR="http://www.7-zip.org/a/"
 if($arch -eq "x86"){
@@ -17,19 +14,18 @@ if($arch -eq "x86"){
 }
 
 $REMOTEURL="$REMOTEDIR\$FILENAME"
-$INSTALL_PATH="${DST_PATH}\bin"
+$PKG_BIN_PATH="${pkginstallpath}\bin"
 
 # Downloading the installer
-Download-File $REMOTEURL "$DST_PATH\$FILENAME"
+Download-File $REMOTEURL "${pkginstallpath}\$FILENAME"
 
 # Install the package
-if(!(Test-Path -Path "${INSTALL_PATH}" )){
-	pushd
-	cd $DST_PATH
-	cmd /c "$FILENAME /S /D=${INSTALL_PATH}"
+if(!(Test-Path -Path "${PKG_BIN_PATH}" )){
+	pushd ${pkginstallpath}
+	cmd /c "$FILENAME /S /D=${PKG_BIN_PATH}"
 	popd
 }else{
 	Write-Host "  -- Already installed"
 }
 
-"${INSTALL_PATH};" >> "path.env"
+"${PKG_BIN_PATH};" >> "path.env"

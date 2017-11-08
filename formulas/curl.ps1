@@ -1,17 +1,17 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
-      [string] $installpath,
+      [string] $pkginstallpath,
 	  [string] $version,
       [string] $platform,
 	  [string] $arch
 )
 
-$DST_PATH="$installpath\$version-$platform-$arch"
+# Update the sources from git
+$SRC_PATH="${pkginstallpath}\src"
+Git-Update git://github.com/bagder/curl.git ${SRC_PATH}
 
-Write-Host "++ Building curl (version=$version, platform=$platform, arch=$arch"
-Git-Update git://github.com/bagder/curl.git $DST_PATH
-pushd
-cd $DST_PATH
+# Build libcurl
+pushd ${SRC_PATH}
 if(!(Test-Path -Path "builds" )){
 	cmd /c "buildconf.bat"
 	cd winbuild

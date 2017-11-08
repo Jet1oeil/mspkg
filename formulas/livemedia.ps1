@@ -1,31 +1,25 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
-      [string] $installpath,
+      [string] $pkginstallpath,
 	  [string] $version,
       [string] $platform,
 	  [string] $arch
 )
 
-$DST_PATH="$installpath\$version-$platform-$arch"
-Create-Directory $DST_PATH
-
 $FILENAME="live555-latest.tar.gz"
 $REMOTEURL="http://www.live555.com/liveMedia/public/$FILENAME"
 
 # Downloading the sources
-Download-File $REMOTEURL "$DST_PATH\$FILENAME"
+Download-File $REMOTEURL "${pkginstallpath}\$FILENAME"
 
-
-pushd
-cd $DST_PATH
-
-# Extract archive
+pushd ${pkginstallpath}
 
 # Remove-Item "live" -recurse
 # Remove-Item "release" -recurse
 
+# Extract archive
 if(!(Test-Path -Path "live" )){
-	cmd /c "7z x ""$DST_PATH\$FILENAME"" -so | 7z x -aoa -si -ttar -o""."""
+	cmd /c "7z x ""${pkginstallpath}\$FILENAME"" -so | 7z x -aoa -si -ttar -o""."""
 
 	# Patch the file
 	Patch-Line "live/win32config" '(TOOLS32	=).*$' "TOOLS32	= ${env:VCINSTALLDIR}..\VC"
@@ -37,7 +31,7 @@ if(!(Test-Path -Path "live" )){
 	
 	Add-Content "live/win32config" ""
 	Add-Content "live/win32config" ""
-	Add-Content "live/win32config" "PREFIX = $DST_PATH\release"
+	Add-Content "live/win32config" "PREFIX = ${pkginstallpath}\release"
 	Add-Content "live/win32config" 'LIBDIR = $(PREFIX)\lib'
 }
 
@@ -58,4 +52,5 @@ if(!(Test-Path -Path "release" )){
 	# cd ..\mediaServer
 	# nmake /B -f mediaServer.mak install
 }
+
 popd
