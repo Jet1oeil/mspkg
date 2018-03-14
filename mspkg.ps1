@@ -27,6 +27,15 @@ function Create-Directory
 	}
 }
 
+function Delete-Directory
+{
+	param( [string]$dirpath)
+	if((Test-Path -Path $dirpath )){
+		Write-Host "  -- Deleting directory $dirpath"
+		Remove-Item $dirpath -Force -Recurse
+	}
+}
+
 function Download-File
 {
 	param( [string]$url, [string]$dstpath)
@@ -92,17 +101,19 @@ function Install-Package
 	
 }
 
-Write-Host "Lanching command $command $pkg"
+Write-Host "Launching command $command $pkg"
 
 # Prepare environnement
-Write-Host "++ Setting environnement for $platform"
+Write-Host "++ Setting environment for $platform"
 $PLATEFORM_ARCH="$platform-$arch"
-switch ($PLATEFORM_ARCH)
+if (Test-Path "$ENV_PATH\$PLATEFORM_ARCH.ps1")
 {
-	"msvc2010-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
-	"msvc2017-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
-	"msvc2017-x64" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
-	"mingw32gcc530-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
+  Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"
+}
+if((Test-Path -Path "$ENV_PATH\$PLATEFORM_ARCH.env" )){
+    # File must be prepended by a ;
+	$pathenv = (Get-Content "$ENV_PATH\$PLATEFORM_ARCH.env") -join ""
+	$env:Path+= "$pathenv"
 }
 Write-Host "++ PATH is $env:Path"
 

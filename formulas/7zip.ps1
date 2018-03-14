@@ -13,7 +13,7 @@ if($arch -eq "x86"){
 	$FILENAME="7z1604-x64.exe"
 }
 
-$REMOTEURL="$REMOTEDIR\$FILENAME"
+$REMOTEURL="$REMOTEDIR/$FILENAME"
 $PKG_BIN_PATH="${pkginstallpath}\bin"
 
 # Downloading the installer
@@ -28,4 +28,4 @@ if(!(Test-Path -Path "${PKG_BIN_PATH}" )){
 	Write-Host "  -- Already installed"
 }
 
-"${PKG_BIN_PATH};" >> "path.env"
+";${PKG_BIN_PATH}" >> "$pkginstallpath/path.env"

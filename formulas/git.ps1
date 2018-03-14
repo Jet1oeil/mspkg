@@ -6,14 +6,14 @@ param(
 	  [string] $arch
 )
 
-$REMOTEDIR="https://github.com/git-for-windows/git/releases/download/v2.15.0.windows.1"
+$REMOTEDIR="https://github.com/git-for-windows/git/releases/download/v2.16.2.windows.1"
 if($arch -eq "x86"){
-	$FILENAME="PortableGit-2.15.0-32-bit.7z.exe"
+	$FILENAME="PortableGit-2.16.2-32-bit.7z.exe"
 }else{
-	$FILENAME="PortableGit-2.15.0-64-bit.7z.exe"
+	$FILENAME="PortableGit-2.16.2-64-bit.7z.exe"
 }
 
-$REMOTEURL="$REMOTEDIR\$FILENAME"
+$REMOTEURL="$REMOTEDIR/$FILENAME"
 
 # Downloading the installer
 Download-File $REMOTEURL "${pkginstallpath}\$FILENAME"
@@ -29,5 +29,5 @@ if(!(Test-Path -Path "${pkginstallpath}\PortableGit" )){
 	Write-Host "  -- Already installed"
 }
 
-"${pkginstallpath}\PortableGit\bin;" >> "path.env"
-"${pkginstallpath}\PortableGit\usr\bin;" >> "path.env"
+";${pkginstallpath}\PortableGit\bin" >> "$pkginstallpath/path.env"
+";${pkginstallpath}\PortableGit\usr\bin" >> "$pkginstallpath/path.env"

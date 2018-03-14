@@ -2,29 +2,31 @@
 
 Utility to build/install package on Windows
 
-## Edit the configuration
+## Supported compilation
 
-### Set environment
+```
+ARCH=[x86,x64]
+PLATFORM=[msvc2010,msvc2017,mingw32gcc530]
+```
 
-Create/Edit a path.env file to contains extra path:
+## Set environment
 
-Example for mingw32
+### Mingw32
+
+Create/Edit a env/PLATFORM-ARCH.env file to contains extra path:
 
 ```
 C:\Qt\Tools\mingw530_32\bin;C:\Qt\Tools\mingw530_32\i686-w64-mingw32\bin
 ```
 
-### Define the target
+### MSVC
 
-Edit mspkg.bat to set the platform:
+Install Visual Studio for C++ development
 
-ARCH=[x86,x64]
-PLATFORM=[msvc2010,msvc2017,mingw32gcc530]
+## Build
 
-### Set the build 
+Run following command to compile
 
-Edit mspkg.bat and comment what you don't want to install
-
-## Build all deps
-
-msbuild.bat
+```
+msbuild.bat install curl -version "latest" -platform PLATFORM -arch ARCH
+```

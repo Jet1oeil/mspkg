@@ -1,15 +1,40 @@
 @echo off
 
-del path.env
+set ARG_COMMAND=%1
+set ARG_PACKAGE=%2
+set ARG_VERSION=latest
+set ARG_PLATFORM=mingw32gcc530
+set ARG_ARCH=x86
 
-set ARCH=x64
-set PLATFORM=msvc2017
+Rem Check the command
+if not "%ARG_COMMAND%" == "install" (
+	echo Usage:
+	echo       %0 install package [-version VERSION -arch ARCH -platform PLATFORM]
+	exit
+)
 
-Rem powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 %*"
-powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install 7zip -version "latest" -arch %ARCH% -platform %PLATFORM%"
-powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install git -version "latest" -arch %ARCH% -platform %PLATFORM%"
-powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install curl -version "git" -arch %ARCH% -platform %PLATFORM%"
-powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install livemedia -version "latest" -arch %ARCH% -platform %PLATFORM%"
-powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install ffmpeg -version "last" -arch %ARCH% -platform %PLATFORM%"
-Rem powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install qt4 -version "last" -arch %ARCH% -platform %PLATFORM%"
-Rem powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install qt5 -version "last" -arch %ARCH% -platform %PLATFORM%"
+shift
+
+Rem Check command install
+if "%ARG_COMMAND%" == "install" (
+	set ARG_PACKAGE=%1
+	shift
+
+	:loop
+		if "-version" == "%1" (
+			shift
+			set ARG_VERSION=%1
+		)
+		if "-platform" == "%1" (
+			shift
+			set ARG_PLATFORM=%1
+		)
+		if "-arch" == "%1" (
+			shift
+			set ARG_ARCH=%1
+		)
+		shift
+		if not "%~1"=="" goto loop
+
+	powershell -ExecutionPolicy Unrestricted -Command ".\mspkg.ps1 install %ARG_PACKAGE% -version %ARG_VERSION% -platform %ARG_PLATFORM%  -arch %ARG_ARCH%"
+)
