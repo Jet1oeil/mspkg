@@ -22,6 +22,9 @@ if(!(Test-Path -Path "live" )){
 	# Extract the file
 	cmd /c "7z x ""${pkginstallpath}\$FILENAME"" -so | 7z x -aoa -si -ttar -o""."""
 
+	Add-Content "live/win32config" ""
+	Add-Content "live/win32config" ""
+	
     if("$platform" -like "msvc*"){
 		# Patch the file
 		Patch-Line "live/win32config" '(TOOLS32	=).*$' "TOOLS32	= ${env:VCINSTALLDIR}..\VC"
@@ -37,18 +40,13 @@ if(!(Test-Path -Path "live" )){
 		Copy-Item config.mingw win32config
 		cd ..
 		
-		Patch-Line "live/win32config" 'C_COMPILER =		.*$' 'C_COMPILER =		"gcc"'
-		
-		
+		Add-Content "live/win32config" "C_COMPILER = gcc.exe"
 	}
 
-	$pkginstallunixpath = ($pkginstallpath -replace "\\","/")
 	
-	Add-Content "live/win32config" ""
-	Add-Content "live/win32config" ""
+	$pkginstallunixpath = ($pkginstallpath -replace "\\","/")
 	Add-Content "live/win32config" "PREFIX = ${pkginstallunixpath}/release"
 	Add-Content "live/win32config" 'LIBDIR = $(PREFIX)/lib'
-	Add-Content "live/win32config" "C_COMPILER = gcc.exe"
 }
 
 # Build project
