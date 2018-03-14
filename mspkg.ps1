@@ -97,13 +97,14 @@ Write-Host "Lanching command $command $pkg"
 # Prepare environnement
 Write-Host "++ Setting environnement for $platform"
 $PLATEFORM_ARCH="$platform-$arch"
-
 switch ($PLATEFORM_ARCH)
 {
 	"msvc2010-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
 	"msvc2017-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
 	"msvc2017-x64" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
+	"mingw32gcc530-x86" {Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"}
 }
+Write-Host "++ PATH is $env:Path"
 
 # Execute "install" command
 if ($command -eq "install") {

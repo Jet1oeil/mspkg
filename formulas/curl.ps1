@@ -13,13 +13,18 @@ Git-Update git://github.com/bagder/curl.git ${SRC_PATH}
 # Build libcurl
 pushd ${SRC_PATH}
 if(!(Test-Path -Path "builds" )){
-	cmd /c "buildconf.bat"
-	cd winbuild
-	switch($platform)
-	{
-		"msvc2010" {$VCVER="10"}
-		"msvc2017" {$VCVER="16"}
+
+    if("$platform" -like "mingw32*"){
+		mingw32-make mingw32
+	}else{
+		cmd /c "buildconf.bat"
+		cd winbuild
+		switch($platform)
+		{
+			"msvc2010" {$VCVER="10"}
+			"msvc2017" {$VCVER="16"}
+		}
+		nmake /f Makefile.vc mode=dll VC=$VCVER
 	}
-	nmake /f Makefile.vc mode=dll VC=$VCVER
 }
 popd
