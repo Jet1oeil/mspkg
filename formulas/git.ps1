@@ -1,13 +1,11 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
       [string] $pkginstallpath,
-	  [string] $version,
-      [string] $platform,
-	  [string] $arch
+	  [string] $version
 )
 
 $REMOTEDIR="https://github.com/git-for-windows/git/releases/download/v2.16.2.windows.1"
-if($arch -eq "x86"){
+if("$env:MSPKG_VE_ARCH" -eq "x86"){
 	$FILENAME="PortableGit-2.16.2-32-bit.7z.exe"
 }else{
 	$FILENAME="PortableGit-2.16.2-64-bit.7z.exe"

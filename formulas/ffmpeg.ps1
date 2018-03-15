@@ -1,12 +1,10 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
       [string] $pkginstallpath,
-	  [string] $version,
-      [string] $platform,
-	  [string] $arch
+	  [string] $version
 )
 
-if($arch -eq "x86"){
+if("$env:MSPKG_VE_ARCH" -eq "x86"){
 	$VERSIONARCH = "win32"
 }else{
 	$VERSIONARCH = "win64"

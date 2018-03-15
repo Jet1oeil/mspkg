@@ -1,9 +1,7 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
       [string] $pkginstallpath,
-	  [string] $version,
-      [string] $platform,
-	  [string] $arch
+	  [string] $version
 )
 
 # Downloading the package dev

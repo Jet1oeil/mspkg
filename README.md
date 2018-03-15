@@ -11,6 +11,13 @@ PLATFORM=[msvc2010,msvc2017,mingw32gcc530]
 
 ## Set environment
 
+Create an empty directory
+
+```
+cd [VIRTUAL_ENV_PATH]
+[MSPKG_INSTALL_PATH]\mspkg.bat createenv PLATFORM ARCH
+```
+
 ### Mingw32
 
 Create/Edit a env/PLATFORM-ARCH.env file to contains extra path:
@@ -28,5 +35,7 @@ Install Visual Studio for C++ development
 Run following command to compile
 
 ```
-msbuild.bat install curl -version "latest" -platform PLATFORM -arch ARCH
+cd [VIRTUAL_ENV_PATH]
+[MSPKG_INSTALL_PATH]\mspkg.bat install curl
+[MSPKG_INSTALL_PATH]\mspkg.bat install livemedia -version "latest"
 ```

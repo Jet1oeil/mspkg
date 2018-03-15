@@ -3,15 +3,23 @@ param(
       [string] $command,
       [Parameter(Mandatory = $true, Position = 1)]
       [string] $pkg,
-	  [string] $version,
-      [string] $platform,
-	  [string] $arch
+	  [string] $version
 )
 
-$ENV_PATH = Join-Path(pwd) '\env'
-$VE_ROOTPATH =  Join-Path(pwd) '\ve'
-$FORMULAS_PATH =  Join-Path(pwd) '\formulas'
+$VE_ROOTPATH = pwd
 
+$VE_ENV_FILE="$VE_ROOTPATH\mspkg.env"
+if(!(Test-Path -Path "$VE_ENV_FILE" )){
+	Write-Host "++ Current directory doesn't seem to be a virtual environment"
+	exit
+}
+$lines = cat "$VE_ENV_FILE"
+foreach ($line in $lines) {
+    $tokens = $line.Split("=");
+    $varname = $tokens[0];
+    $varvalue = $tokens[1];
+	[System.Environment]::SetEnvironmentVariable("$varname", "$varvalue")
+}
 
 if((Test-Path -Path "path.env" )){
 	$pathenv = (Get-Content "path.env") -join ""
@@ -75,9 +83,9 @@ function Patch-Line
 
 function Install-Package
 {
-	param([string]$pkg, [string]$version, [string]$platform, [string]$arch, [string]$vepath)
+	param([string]$pkg, [string]$version, [string]$vepath)
 	
-	Write-Host "++ Installing $pkg $platform"
+	Write-Host "++ Installing $pkg for $env:MSPKG_VE_PLATFORM $env:MSPKG_VE_ARCH"
 	
 	#$FORMULA_FILE="$FORMULAS_PATH/$pkg.json"
 	
@@ -90,14 +98,14 @@ function Install-Package
 	#	$version="default"
 	#}
 	
-	$PKG_INSTALL_PATH="$vepath\$pkg\$version"
+	$PKG_INSTALL_PATH="$vepath\$pkg"
 	Create-Directory "$PKG_INSTALL_PATH"
 	
-	$INSTALL_SCRIPT="$FORMULAS_PATH\$pkg.ps1"
+	$INSTALL_SCRIPT="$env:MSPKG_FORMULAS_PATH\$pkg.ps1"
 	Write-Host "  -- Launching $INSTALL_SCRIPT"
 	
-	Write-Host "++ Building $pkg (version=$version, platform=$platform, arch=$arch)"
-	Invoke-Expression -Command "$INSTALL_SCRIPT -version $version -platform $platform -arch $arch $PKG_INSTALL_PATH"
+	Write-Host "++ Building $pkg (version=$version, platform=$env:MSPKG_VE_PLATFORM, arch=$env:MSPKG_VE_ARCH)"
+	Invoke-Expression -Command "$INSTALL_SCRIPT -version $version $PKG_INSTALL_PATH"
 	
 }
 
@@ -105,22 +113,23 @@ Write-Host "Launching command $command $pkg"
 
 # Prepare environnement
 Write-Host "++ Setting environment for $platform"
-$PLATEFORM_ARCH="$platform-$arch"
-if (Test-Path "$ENV_PATH\$PLATEFORM_ARCH.ps1")
+$PLATEFORM_ARCH="$env:MSPKG_VE_PLATFORM-$env:MSPKG_VE_ARCH"
+if (Test-Path "$env:MSPKG_ENV_PATH\$PLATEFORM_ARCH.ps1")
 {
-  Invoke-Expression "$ENV_PATH\$PLATEFORM_ARCH.ps1"
+  Invoke-Expression "$env:MSPKG_ENV_PATH\$PLATEFORM_ARCH.ps1"
 }
-if((Test-Path -Path "$ENV_PATH\$PLATEFORM_ARCH.env" )){
+Write-Host "++ $env:MSPKG_ENV_PATH\$PLATEFORM_ARCH.env"
+if((Test-Path -Path "$env:MSPKG_ENV_PATH\$PLATEFORM_ARCH.env" )){
     # File must be prepended by a ;
-	$pathenv = (Get-Content "$ENV_PATH\$PLATEFORM_ARCH.env") -join ""
+	$pathenv = (Get-Content "$env:MSPKG_ENV_PATH\$PLATEFORM_ARCH.env") -join ""
 	$env:Path+= "$pathenv"
 }
 Write-Host "++ PATH is $env:Path"
+# ls Env:
 
 # Execute "install" command
 if ($command -eq "install") {
-	$VE_PATH="$VE_ROOTPATH\$platform-$arch"
-	Create-Directory "$VE_PATH"
+	Create-Directory "$VE_ROOTPATH"
 
-	Install-Package "$pkg" -version "$version" -platform "$platform" -arch "$arch" "$VE_PATH"
+	Install-Package "$pkg" -version "$version" "$VE_ROOTPATH"
 }

@@ -1,9 +1,7 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
       [string] $pkginstallpath,
-	  [string] $version,
-      [string] $platform,
-	  [string] $arch
+	  [string] $version
 )
 
 $FILENAME="live555-latest.tar.gz"
@@ -25,7 +23,7 @@ if(!(Test-Path -Path "live" )){
 	Add-Content "live/win32config" ""
 	Add-Content "live/win32config" ""
 	
-    if("$platform" -like "msvc*"){
+    if("$env:MSPKG_VE_PLATFORM" -like "msvc*"){
 		# Patch the file
 		Patch-Line "live/win32config" '(TOOLS32	=).*$' "TOOLS32	= ${env:VCINSTALLDIR}..\VC"
 		Patch-Line "live/win32config" '(.*)msvcirt.lib$' '${1}msvcrt.lib'
@@ -52,7 +50,7 @@ if(!(Test-Path -Path "live" )){
 # Build project
 if(!(Test-Path -Path "release" )){
 	cd live
-    if("$platform" -like "mingw32*"){
+    if("$env:MSPKG_VE_PLATFORM" -like "mingw32*"){
 		cmd /c "genWindowsMakefiles.cmd"
 		cd liveMedia
 		mingw32-make -f liveMedia.mak install

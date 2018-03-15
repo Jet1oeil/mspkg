@@ -1,13 +1,11 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
       [string] $pkginstallpath,
-	  [string] $version,
-      [string] $platform,
-	  [string] $arch
+	  [string] $version
 )
 
 $REMOTEDIR="http://www.7-zip.org/a/"
-if($arch -eq "x86"){
+if("$env:MSPKG_VE_ARCH" -eq "x86"){
 	$FILENAME="7z1604.exe"
 }else{
 	$FILENAME="7z1604-x64.exe"

@@ -1,9 +1,7 @@
 param(
       [Parameter(Mandatory = $true, Position = 0)]
       [string] $pkginstallpath,
-	  [string] $version,
-      [string] $platform,
-	  [string] $arch
+	  [string] $version
 )
 
 # Update the sources from git
@@ -14,9 +12,9 @@ Git-Update git://github.com/bagder/curl.git ${SRC_PATH}
 # Build libcurl
 pushd ${SRC_PATH}
 if(!(Test-Path -Path "builds" )){
-    if("$platform" -like "mingw32*"){
+    if("$env:MSPKG_VE_PLATFORM" -like "mingw32*"){
 		if(!(Test-Path -Path "Makefile" )){
-			buildconf.bat
+			cmd /c "buildconf.bat"
 		}
 		mingw32-make mingw32
 		
