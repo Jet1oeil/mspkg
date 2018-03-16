@@ -31,8 +31,12 @@ if "%ARG_COMMAND%" == "createenv" (
 		goto exit
 	)
 	
-	echo MSPKG_VE_PLATFORM=%ARG_PLATFORM%>> mspkg.env
+	echo %PROGRAM%: Create environement with PLATFORM=%ARG_PLATFORM%, ARCH=%ARG_ARCH%
+	echo MSPKG_VE_PLATFORM=%ARG_PLATFORM%> mspkg.env
 	echo MSPKG_VE_ARCH=%ARG_ARCH%>> mspkg.env
+	
+	echo @echo off>mspkg.bat
+	echo %MSPKG_ROOT_PATH%mspkg.bat %%*>>mspkg.bat
 	
 	goto exit
 )

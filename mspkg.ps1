@@ -124,6 +124,17 @@ if((Test-Path -Path "$env:MSPKG_ENV_PATH\$PLATEFORM_ARCH.env" )){
 	$pathenv = (Get-Content "$env:MSPKG_ENV_PATH\$PLATEFORM_ARCH.env") -join ""
 	$env:Path+= "$pathenv"
 }
+# Add all bin path of each modules
+foreach($moduledir in get-childitem) {
+    if ($moduledir.Attributes -eq "Directory") {
+		if((Test-Path -Path "$VE_ROOTPATH\$moduledir\path.env" )){
+			# File must be prepended by a ;
+			$pathenv = (Get-Content "$VE_ROOTPATH\$moduledir\path.env") -join ""
+			$env:Path+= "$pathenv"
+		}
+    }
+}
+
 Write-Host "++ PATH is $env:Path"
 # ls Env:
 
